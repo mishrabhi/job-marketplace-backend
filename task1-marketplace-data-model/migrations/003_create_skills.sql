@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS skills (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  category TEXT,
+  max_level INT NOT NULL DEFAULT 100,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
