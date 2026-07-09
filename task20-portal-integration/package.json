@@ -1,8 +1,8 @@
 {
-  "name": "placemux-task19-bulk-onboarding",
+  "name": "placemux-task20-portals-integration",
   "version": "1.0.0",
   "type": "module",
-  "description": "PlaceMux Bulk Cohort Student Onboarding Transaction Engine",
+  "description": "PlaceMux Cross-Portal Operations Structural Flow Orchestration & Validation Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

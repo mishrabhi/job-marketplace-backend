@@ -13,9 +13,9 @@ export const appError = (statusCode, code, message) => new AppError(statusCode, 
 export const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const code = err.code || 'INTERNAL_SERVER_ERROR';
-  const message = err.message || 'An unexpected ingestion pipeline error occurred';
+  const message = err.message || 'Portal ecosystem integration exception intercepted';
 
-  logger.error(`[Ingestion Pipeline Intercept] ${message}`, { code, stack: err.stack });
+  logger.error(`[Ecosystem Integration Fault] ${message}`, { code, stack: err.stack });
 
   return res.status(statusCode).json({
     success: false,
