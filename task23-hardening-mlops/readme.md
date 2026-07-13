@@ -133,8 +133,6 @@ export BASE=http://localhost:3009/api/v1
 export CANDIDATE_STUDENT_UUID="4b111d42-ab12-4211-8224-2da21e48bc02"
 ```
 
----
-
 ## Step 1 — Log an MLOps Inference
 
 ```bash
@@ -260,4 +258,5 @@ Allow Request
         ▼
 Continue Processing
 ```
+
 
