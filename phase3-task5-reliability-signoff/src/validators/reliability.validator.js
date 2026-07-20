@@ -10,7 +10,7 @@ export const executeConcurrencyTestSchema = z.object({
 export const commitSignoffSchema = z.object({
   signed_off_by: z.string().uuid({ message: "Valid signing engineer/lead identifier UUID required" }),
   regression_tests_passed: z.boolean().refine(val => val === true, {
-    message: "Regression testing suite must pass completely prior to scale sign-off"[cite: 21]
+    message: "Regression testing suite must pass completely prior to scale sign-off"
   }),
   concurrency_proof_meta: z.object({
     max_concurrent_burst: z.number().int().positive(),
