@@ -10,7 +10,7 @@ The platform enables engineering teams to validate new ranking models in product
 ```text
 phase3-task11-model-serving/
 ├── migrations/
-│   └── 042_model_serving_tables.sql         # Model deployment & inference schema
+│   └── 043_ml_ranker_serving.sql         # Model deployment & inference schema
 ├── src/
 │   ├── config/
 │   │   ├── db.js                            # Database connection
@@ -19,13 +19,13 @@ phase3-task11-model-serving/
 │   ├── middlewares/
 │   │   └── errorHandler.js                  # Global error handler
 │   ├── validators/
-│   │   └── intelligence.validator.js        # Request validation schemas
+│   │   └── ranker.validator.js              # Request validation schemas
 │   ├── controllers/
-│   │   └── intelligence.controller.js       # Model serving endpoints
+│   │   └── ranker.controller.js             # Model serving endpoints
 │   ├── services/
-│   │   └── intelligence.service.js          # Ranking model serving engine
+│   │   └── ranker.service.js                # Ranking model serving engine
 │   └── routes/
-│       ├── intelligence.routes.js           # /api/v1/intelligence endpoints
+│       ├── ranker.routes.js                 # /api/v1/intelligence endpoints
 │       └── index.js                         # Route registry
 ├── app.js                                   # Express application
 ├── server.js                                # Server bootstrap
