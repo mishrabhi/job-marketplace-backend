@@ -1,0 +1,39 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PlaceMux Pre-Project Mock API",
+    "version": "1.0.0",
+    "description": "Mock API endpoints providing contract-consistent responses for parallel frontend integration."
+  },
+  "paths": {
+    "/api/v1/jobs": {
+      "get": {
+        "summary": "Get listed job postings",
+        "responses": {
+          "200": { "description": "List of active job postings" }
+        }
+      }
+    },
+    "/api/v1/candidates/{id}": {
+      "get": {
+        "summary": "Get candidate profile details",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Candidate profile details" },
+          "404": { "description": "Candidate not found" }
+        }
+      }
+    },
+    "/api/v1/applications": {
+      "post": {
+        "summary": "Submit candidate job application",
+        "responses": {
+          "201": { "description": "Application submitted successfully" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    }
+  }
+}
