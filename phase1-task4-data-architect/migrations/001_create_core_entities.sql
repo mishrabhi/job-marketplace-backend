@@ -1,0 +1,60 @@
+-- Migration 001: Core Entities Definition[cite: 9]
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 1. TENANTS TABLE
+CREATE TABLE IF NOT EXISTS tenants (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 2. COLLEGES TABLE
+CREATE TABLE IF NOT EXISTS colleges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE RESTRICT,
+  name TEXT NOT NULL,
+  code TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 3. STUDENTS TABLE
+CREATE TABLE IF NOT EXISTS students (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  college_id UUID NOT NULL REFERENCES colleges(id) ON DELETE CASCADE,
+  full_name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  gpa NUMERIC(3, 2) NOT NULL CHECK (gpa >= 0.00 AND gpa <= 10.00),
+  grad_year INTEGER NOT NULL CHECK (grad_year BETWEEN 2020 AND 2035),
+  status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'PLACED', 'INACTIVE')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 4. COMPANIES TABLE
+CREATE TABLE IF NOT EXISTS companies (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  domain TEXT NOT NULL,
+  website TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 5. JOBS TABLE
+CREATE TABLE IF NOT EXISTS jobs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE RESTRICT,
+  title TEXT NOT NULL,
+  min_gpa NUMERIC(3, 2) NOT NULL DEFAULT 0.00 CHECK (min_gpa >= 0.00 AND min_gpa <= 10.00),
+  status TEXT NOT NULL DEFAULT 'OPEN' CHECK (status IN ('OPEN', 'CLOSED', 'DRAFT')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 6. APPLICATIONS TABLE
+CREATE TABLE IF NOT EXISTS applications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  job_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
+  student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'APPLIED' CHECK (status IN ('APPLIED', 'SHORTLISTED', 'REJECTED', 'OFFERED')),
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT unique_student_job_application UNIQUE (job_id, student_id)
+);
