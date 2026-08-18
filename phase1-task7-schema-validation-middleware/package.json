@@ -1,0 +1,20 @@
+{
+  "name": "placemux-phase1-task7-schema-validation",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "PlaceMux Task 7 - Reusable Edge Schema Validation and Sanitization Middleware",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "winston": "^3.11.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
