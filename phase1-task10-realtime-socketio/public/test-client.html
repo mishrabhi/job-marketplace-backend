@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PlaceMux Real-time Test Client</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 30px; background: #f8fafc; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 650px; margin-bottom: 20px; }
+    button { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 70%; margin-right: 8px; }
+    #logs { background: #0f172a; color: #38bdf8; padding: 15px; border-radius: 8px; height: 260px; overflow-y: scroll; font-family: monospace; font-size: 13px; }
+    .status-badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-weight: bold; font-size: 12px; }
+    .connected { background: #dcfce7; color: #166534; }
+    .disconnected { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>PlaceMux Real-Time Socket.io Tester</h2>
+    <p>Connection Status: <span id="status" class="status-badge disconnected">DISCONNECTED</span></p>
+    
+    <div style="margin-bottom: 15px;">
+      <input type="text" id="tokenInput" placeholder="Paste JWT Auth Token here" />
+      <button onclick="connectSocket()">Connect</button>
+    </div>
+
+    <div>
+      <input type="text" id="driveInput" placeholder="Enter Drive UUID (e.g. drive-101)" />
+      <button onclick="joinDriveRoom()">Subscribe to Drive Room</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Live Event Logs</h3>
+    <div id="logs"></div>
+  </div>
+
+  <script>
+    let socket = null;
+
+    function log(msg, type = 'INFO') {
+      const logs = document.getElementById('logs');
+      const time = new Date().toLocaleTimeString();
+      logs.innerHTML += `<div>[${time}] [${type}] ${msg}</div>`;
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    function connectSocket() {
+      const token = document.getElementById('tokenInput').value;
+      if (!token) return alert('Please provide a JWT token!');
+
+      if (socket) socket.disconnect();
+
+      socket = io('http://localhost:3000', {
+        auth: { token: token },
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000
+      });
+
+      socket.on('connect', () => {
+        document.getElementById('status').textContent = 'CONNECTED';
+        document.getElementById('status').className = 'status-badge connected';
+        log(`Socket connected successfully (ID: ${socket.id})`, 'CONNECT');
+      });
+
+      socket.on('notification_received', (data) => {
+        log(`Direct Notification: ${JSON.stringify(data)}`, 'DIRECT_EVENT');
+      });
+
+      socket.on('drive_status_updated', (data) => {
+        log(`Drive Room Update: ${JSON.stringify(data)}`, 'DRIVE_EVENT');
+      });
+
+      socket.on('broadcast_announcement', (data) => {
+        log(`Role Broadcast: ${JSON.stringify(data)}`, 'ROLE_EVENT');
+      });
+
+      socket.on('joined_room_ack', (data) => {
+        log(`Subscribed to Room: ${data.room}`, 'ROOM_ACK');
+      });
+
+      socket.on('connect_error', (err) => {
+        log(`Connection Error: ${err.message}`, 'ERROR');
+      });
+
+      socket.on('disconnect', (reason) => {
+        document.getElementById('status').textContent = 'DISCONNECTED';
+        document.getElementById('status').className = 'status-badge disconnected';
+        log(`Disconnected: ${reason}`, 'DISCONNECT');
+      });
+    }
+
+    function joinDriveRoom() {
+      const driveId = document.getElementById('driveInput').value;
+      if (!socket || !socket.connected) return alert('Connect socket first!');
+      if (!driveId) return alert('Enter Drive ID');
+
+      socket.emit('join_drive_room', driveId);
+    }
+  </script>
+</body>
+</html>
